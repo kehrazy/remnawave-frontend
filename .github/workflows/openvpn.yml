@@ -1,0 +1,27 @@
+name: OpenVPN frontend
+on:
+  push:
+    branches: [openvpn]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run start:build
+      - run: zip -qr remnawave-frontend.zip dist
+      - name: Publish frontend
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "openvpn-${GITHUB_SHA}" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --prerelease --title "OpenVPN ${GITHUB_SHA:0:12}" --notes "Panel UI for OpenVPN endpoint management." remnawave-frontend.zip

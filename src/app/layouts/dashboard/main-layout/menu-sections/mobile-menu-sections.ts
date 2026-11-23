@@ -94,6 +94,12 @@ export const useMobileMenuSections = (): MenuItem[] => {
                             id: 'management'
                         },
                         {
+                            name: 'OpenVPN',
+                            href: ROUTES.DASHBOARD.MANAGEMENT.OPENVPN,
+                            icon: HiServer,
+                            id: 'openvpn'
+                        },
+                        {
                             name: `${t('constants.node-plugins')} β`,
                             href: ROUTES.DASHBOARD.MANAGEMENT.NODE_PLUGINS.ROOT,
                             icon: TbPackage,

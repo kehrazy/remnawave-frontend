@@ -82,18 +82,26 @@ export function ConfigProfileByUuidPageConnector() {
     }, [initWasm])
 
     useLayoutEffect(() => {
-        initWasm()
+        if (!configProfile) return
+        // oxlint-disable-next-line react(set-state-in-effect), react-hooks-js(set-state-in-effect) -- WASM startup reports download and external runtime state.
+        if (configProfile.engine === 'xray') initWasm()
 
         return () => {
             delete window.onWasmInitialized
         }
-    }, [])
+    }, [configProfile?.engine])
 
     if (!uuid) {
         return <Navigate to={ROUTES.DASHBOARD.MANAGEMENT.CONFIG_PROFILES} />
     }
 
-    if (isLoading || isConfigProfileLoading || !configProfile || isSnippetsLoading || !snippets) {
+    if (
+        (configProfile?.engine === 'xray' && isLoading) ||
+        isConfigProfileLoading ||
+        !configProfile ||
+        isSnippetsLoading ||
+        !snippets
+    ) {
         return <LoadingScreen text="The WASM module is loading..." value={downloadProgress} />
     }
 

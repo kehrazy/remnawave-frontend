@@ -11,6 +11,7 @@ import {
     ResetNodeTrafficCommand,
     RestartAllNodesCommand,
     RestartNodeCommand,
+    RestartNodeEngineCommand,
     UpdateNodeCommand
 } from '@remnawave/backend-contract'
 
@@ -288,4 +289,11 @@ export const useBulkNodesUpdate = createMutationHook({
             })
         }
     }
+})
+
+export const useRestartNodeEngine = createMutationHook({
+    endpoint: RestartNodeEngineCommand.TSQ_url,
+    routeParamsSchema: RestartNodeEngineCommand.RequestParamSchema,
+    responseSchema: RestartNodeEngineCommand.ResponseSchema,
+    requestMethod: RestartNodeEngineCommand.endpointDetails.REQUEST_METHOD
 })

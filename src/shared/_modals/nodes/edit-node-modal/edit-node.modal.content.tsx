@@ -96,13 +96,25 @@ export const EditNodeByUuidModalContent = (props: IProps) => {
                 integrationUuids: fetchedNode.integrationUuids ?? [],
                 ips: fetchedNode.ips ?? [],
                 proxyUrl: fetchedNode.proxyUrl ?? undefined,
-                configProfile: {
-                    activeConfigProfileUuid:
-                        fetchedNode.configProfile.activeConfigProfileUuid ?? '',
-                    activeInbounds:
-                        fetchedNode.configProfile.activeInbounds.map((inbound) => inbound.uuid) ??
-                        []
-                },
+                nativeInbounds: fetchedNode.engines
+                    .filter((engine) => engine.type !== 'xray')
+                    .flatMap((engine) =>
+                        engine.profiles.flatMap((profile) =>
+                            profile.inbounds
+                                .filter((inbound) => inbound.assigned)
+                                .map((inbound) => inbound.uuid)
+                        )
+                    ),
+                configProfile: fetchedNode.configProfile.activeConfigProfileUuid
+                    ? {
+                          activeConfigProfileUuid:
+                              fetchedNode.configProfile.activeConfigProfileUuid ?? '',
+                          activeInbounds:
+                              fetchedNode.configProfile.activeInbounds.map(
+                                  (inbound) => inbound.uuid
+                              ) ?? []
+                      }
+                    : null,
 
                 providerUuid: fetchedNode.providerUuid ?? undefined,
                 activePluginUuid: fetchedNode.activePluginUuid ?? undefined,
@@ -125,11 +137,14 @@ export const EditNodeByUuidModalContent = (props: IProps) => {
                 ...changedValues,
                 uuid: fetchedNode.uuid,
                 ...(changedValues.configProfile !== undefined && {
-                    configProfile: {
-                        activeConfigProfileUuid:
-                            changedValues.configProfile.activeConfigProfileUuid,
-                        activeInbounds: changedValues.configProfile.activeInbounds ?? []
-                    }
+                    configProfile:
+                        changedValues.configProfile === null
+                            ? null
+                            : {
+                                  activeConfigProfileUuid:
+                                      changedValues.configProfile.activeConfigProfileUuid,
+                                  activeInbounds: changedValues.configProfile.activeInbounds ?? []
+                              }
                 })
             }
         })

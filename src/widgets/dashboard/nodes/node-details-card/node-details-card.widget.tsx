@@ -70,11 +70,10 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
     const { mutate: enableNode, isPending: isEnableNodePending } = useEnableNode(mutationParams)
 
     const isConfigMissing = useMemo(() => {
-        return (
-            node.configProfile.activeConfigProfileUuid === null ||
-            node.configProfile.activeInbounds.length === 0
+        return !node.engines.some((engine) =>
+            engine.profiles.some((profile) => profile.inbounds.some((inbound) => inbound.assigned))
         )
-    }, [node.configProfile])
+    }, [node.engines])
 
     const { IconComponent, themeIconColor } = useMemo(() => {
         let IconComponent: React.ComponentType<{ size: number }>

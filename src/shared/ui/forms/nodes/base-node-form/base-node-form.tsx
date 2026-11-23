@@ -11,6 +11,7 @@ import {
     GetNodeCommand,
     UpdateNodeCommand
 } from '@remnawave/backend-contract'
+import { NodeEnginesWidget } from '@widgets/dashboard/nodes/node-details-card/node-engines.widget'
 import { NodeErrorMessageWidget } from '@widgets/dashboard/nodes/node-error-message'
 import { motion } from 'framer-motion'
 import { t } from 'i18next'
@@ -112,6 +113,7 @@ export const BaseNodeForm = <T extends UpdateNodeCommand.RequestBody>(props: IPr
                         motionWrapper={MotionWrapper}
                     />
 
+                    <NodeEnginesWidget node={node} />
                     <NodeConfigProfilesCard
                         cardVariants={cardVariants}
                         form={form}
@@ -132,7 +134,6 @@ export const BaseNodeForm = <T extends UpdateNodeCommand.RequestBody>(props: IPr
                 </MotionStack>
             ) : (
                 <Group align="flex-start" gap="md" grow={false} wrap="wrap">
-                    {/* Left Side */}
                     <MotionStack
                         animate="visible"
                         gap="md"
@@ -163,7 +164,6 @@ export const BaseNodeForm = <T extends UpdateNodeCommand.RequestBody>(props: IPr
                         />
                     </MotionStack>
 
-                    {/* Right Side */}
                     <MotionStack
                         animate="visible"
                         gap="md"
@@ -175,6 +175,7 @@ export const BaseNodeForm = <T extends UpdateNodeCommand.RequestBody>(props: IPr
                             <MotionWrapper variants={cardVariants}>{nodeSystemCard}</MotionWrapper>
                         )}
 
+                        <NodeEnginesWidget node={node} />
                         <NodeConfigProfilesCard
                             cardVariants={cardVariants}
                             form={form}

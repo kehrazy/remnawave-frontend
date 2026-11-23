@@ -1,7 +1,7 @@
 import { ActionIcon, Box, Group, Stack, Text } from '@mantine/core'
 import cx from 'clsx'
 import { useTranslation } from 'react-i18next'
-import { TbAlertTriangle, TbChevronRight } from 'react-icons/tb'
+import { TbAlertTriangle, TbChevronRight, TbShieldLock } from 'react-icons/tb'
 
 import { showModal } from '@shared/_modals/show-modal'
 import { XrayLogo } from '@shared/ui/logos'
@@ -61,7 +61,15 @@ export function HostSelectInboundFeature(props: IProps) {
                             size="lg"
                             variant="light"
                         >
-                            {hasInbound ? <XrayLogo size={22} /> : <TbAlertTriangle size={20} />}
+                            {hasInbound ? (
+                                activeProfile.engine === 'xray' ? (
+                                    <XrayLogo size={22} />
+                                ) : (
+                                    <TbShieldLock size={22} />
+                                )
+                            ) : (
+                                <TbAlertTriangle size={20} />
+                            )}
                         </ActionIcon>
 
                         <Stack gap={0} miw={0}>

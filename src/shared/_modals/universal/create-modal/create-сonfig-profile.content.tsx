@@ -1,7 +1,8 @@
-import { Stack, TextInput, Group, Button, Text } from '@mantine/core'
+import { Stack, TextInput, Group, Button, Text, Select } from '@mantine/core'
 import { useField } from '@mantine/form'
 import { CreateConfigProfileCommand } from '@remnawave/backend-contract'
 import { t } from 'i18next'
+import { useState } from 'react'
 import { generatePath, NavigateFunction } from 'react-router'
 
 import { queryClient } from '@shared/api'
@@ -55,6 +56,7 @@ const generateDefaultConfig = () => {
 
 export const CreateConfigProfileContent = (props: IProps) => {
     const { onClose, navigate } = props
+    const [engine, setEngine] = useState<CreateConfigProfileCommand.RequestBody['engine']>('xray')
 
     const handleUpdate = async () => {
         await queryClient.refetchQueries({
@@ -94,7 +96,37 @@ export const CreateConfigProfileContent = (props: IProps) => {
                 createConfigProfile({
                     variables: {
                         name: nameField.getValue(),
-                        config: generateDefaultConfig()
+                        engine,
+                        config:
+                            engine === 'xray'
+                                ? generateDefaultConfig()
+                                : {
+                                      inbounds: [
+                                          {
+                                              type: engine,
+                                              mode: 'server',
+                                              tag:
+                                                  engine +
+                                                  '_' +
+                                                  crypto.randomUUID().replaceAll('-', ''),
+                                              port: engine === 'openvpn' ? 1194 : 5443,
+                                              network: '10.100.0.0/24',
+                                              dnsServers: ['1.1.1.1'],
+                                              egressAddress: null,
+                                              ...(engine === 'openvpn'
+                                                  ? {
+                                                        transport: 'udp',
+                                                        controlChannel: 'tls-crypt-v2',
+                                                        udpMask: 'none'
+                                                    }
+                                                  : {
+                                                        generation: '3.1',
+                                                        preset: 'default',
+                                                        parameters: {}
+                                                    })
+                                          }
+                                      ]
+                                  }
                     }
                 })
             }}
@@ -106,10 +138,19 @@ export const CreateConfigProfileContent = (props: IProps) => {
                     )}
                     <br />
 
-                    {t(
-                        'config-profiles-header-action-buttons.feature.you-can-customize-xray-config-after-creation'
-                    )}
+                    {t('vpn.profile-edit-hint')}
                 </Text>
+                <Select
+                    label={t('vpn.engine')}
+                    value={engine}
+                    allowDeselect={false}
+                    data={[
+                        { value: 'xray', label: 'Xray' },
+                        { value: 'openvpn', label: 'OpenVPN' },
+                        { value: 'amneziawg', label: 'AmneziaWG' }
+                    ]}
+                    onChange={(value) => setEngine(value as typeof engine)}
+                />
                 <TextInput
                     data-autofocus
                     label={t('config-profiles-header-action-buttons.feature.profile-name')}

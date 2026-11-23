@@ -15,8 +15,6 @@ export const ROUTES = {
             USERS: '/dashboard/management/users',
             HOSTS: '/dashboard/management/hosts',
             NODES: '/dashboard/management/nodes',
-            AMNEZIAWG: '/dashboard/management/amneziawg',
-            OPENVPN: '/dashboard/management/openvpn',
             NODES_STATS: '/dashboard/management/stats/nodes',
             NODES_METRICS: '/dashboard/management/metrics/nodes',
             SUBSCRIPTION_SETTINGS: '/dashboard/management/subscription-settings',

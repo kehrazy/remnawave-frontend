@@ -5,7 +5,7 @@ import { GetConfigProfilesCommand } from '@remnawave/backend-contract'
 import { githubDarkTheme, JsonEditor } from 'json-edit-react'
 import { useTranslation } from 'react-i18next'
 import { PiCheck, PiCopy, PiCpu, PiPencil, PiTag, PiTrashDuotone } from 'react-icons/pi'
-import { TbCheck, TbCpu2, TbDownload, TbEye, TbTags } from 'react-icons/tb'
+import { TbCheck, TbCpu2, TbDownload, TbEye, TbTags, TbShieldLock } from 'react-icons/tb'
 import { generatePath, useNavigate } from 'react-router'
 
 import { showModal } from '@shared/_modals/show-modal'
@@ -146,12 +146,23 @@ export function ConfigProfileCardWidget(props: IProps) {
             <EntityCardShared.Root isActive={isActive} onClick={handleEditConfigProfile}>
                 <EntityCardShared.Header>
                     <EntityCardShared.Icon highlight={isActive}>
-                        <XrayLogo size={22} />
+                        {configProfile.engine === 'xray' ? (
+                            <XrayLogo size={22} />
+                        ) : (
+                            <TbShieldLock size={22} />
+                        )}
                     </EntityCardShared.Icon>
                     <EntityCardShared.Content
                         tags={configProfile.tags}
                         badges={
                             <Group gap="xs" wrap="nowrap">
+                                <Badge variant="light">
+                                    {configProfile.engine === 'xray'
+                                        ? 'Xray'
+                                        : configProfile.engine === 'openvpn'
+                                          ? 'OpenVPN'
+                                          : 'AmneziaWG'}
+                                </Badge>
                                 <Tooltip label={t('common.field.inbounds')}>
                                     <Badge
                                         color="blue"

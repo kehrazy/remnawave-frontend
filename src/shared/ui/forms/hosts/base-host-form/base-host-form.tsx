@@ -7,6 +7,9 @@ import {
     Group,
     Popover,
     NumberInput,
+    Select,
+    MultiSelect,
+    SegmentedControl,
     Stack,
     Text,
     TextInput
@@ -61,6 +64,13 @@ export const BaseHostForm = <
     } = props
 
     const { i18n, t } = useTranslation()
+    const [profileUuid, setProfileUuid] = useState(form.getValues().inbound?.configProfileUuid)
+    form.watch('inbound', ({ value }) => setProfileUuid(value?.configProfileUuid))
+    const selectedProfile = configProfiles.find((profile) => profile.uuid === profileUuid)
+    const isNative = selectedProfile && selectedProfile.engine !== 'xray'
+    const [nativeNode, setNativeNode] = useState(form.getValues().nodes?.[0] ?? null)
+    form.watch('nodes', ({ value }) => setNativeNode(value?.[0] ?? null))
+
     const [internalSquadsMode, setInternalSquadsMode] = useState(
         () => form.getValues().internalSquads?.mode
     )
@@ -125,6 +135,7 @@ export const BaseHostForm = <
     }
 
     const saveInbound = (inbound: string, configProfileUuid: string) => {
+        setProfileUuid(configProfileUuid)
         form.setValues({
             inbound: {
                 configProfileInboundUuid: inbound,
@@ -345,7 +356,79 @@ export const BaseHostForm = <
                             </SectionCard.Section>
                         </SectionCard.Root>
 
-                        <HostOptionsSection />
+                        {isNative ? (
+                            <SectionCard.Root>
+                                <SectionCard.Section>
+                                    <Stack gap="md">
+                                        <Text c="dimmed" size="sm">
+                                            {t('vpn.native-host-hint')}
+                                        </Text>
+                                        <Select
+                                            label={t('vpn.host-node')}
+                                            required
+                                            searchable
+                                            value={nativeNode}
+                                            data={nodes
+                                                .filter((node) =>
+                                                    node.engines.some((engine) =>
+                                                        engine.profiles.some((profile) =>
+                                                            profile.inbounds.some(
+                                                                (inbound) =>
+                                                                    inbound.uuid ===
+                                                                        form.getValues().inbound
+                                                                            ?.configProfileInboundUuid &&
+                                                                    inbound.assigned
+                                                            )
+                                                        )
+                                                    )
+                                                )
+                                                .map((node) => ({
+                                                    value: node.uuid,
+                                                    label: node.name
+                                                }))}
+                                            onChange={(value) => {
+                                                setNativeNode(value)
+                                                form.setFieldValue(
+                                                    'nodes',
+                                                    (value ? [value] : []) as never
+                                                )
+                                            }}
+                                        />
+                                        <SegmentedControl
+                                            aria-label={t('base-host-form.access-mode')}
+                                            key={form.key('internalSquads.mode')}
+                                            data={[
+                                                {
+                                                    label: t(
+                                                        'base-host-form.internal-squads-mode-exclude'
+                                                    ),
+                                                    value: 'EXCLUDE'
+                                                },
+                                                {
+                                                    label: t(
+                                                        'base-host-form.internal-squads-mode-allow-only'
+                                                    ),
+                                                    value: 'ALLOW_ONLY'
+                                                }
+                                            ]}
+                                            {...internalSquadsModeProps}
+                                        />
+                                        <MultiSelect
+                                            label={t('constants.internal-squads')}
+                                            searchable
+                                            key={form.key('internalSquads.squads')}
+                                            data={internalSquads.map((squad) => ({
+                                                value: squad.uuid,
+                                                label: squad.name
+                                            }))}
+                                            {...form.getInputProps('internalSquads.squads')}
+                                        />
+                                    </Stack>
+                                </SectionCard.Section>
+                            </SectionCard.Root>
+                        ) : (
+                            <HostOptionsSection />
+                        )}
                     </Stack>
                 </HostOptionsProvider>
             </HostFormDataProvider>

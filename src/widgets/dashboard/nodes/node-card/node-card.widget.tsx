@@ -25,6 +25,7 @@ import { prettifyBytesUtil, prettySiRealtimeBytesUtil } from '@shared/utils/byte
 import { faviconResolver } from '@shared/utils/misc'
 import { getNodeResetDaysUtil, getXrayUptimeUtil } from '@shared/utils/time-utils'
 
+import { EngineStatusBadges } from '../node-details-card/node-engines.widget'
 import { NodeStatusBadgeWidget } from '../node-status-badge'
 import { IProps } from './interfaces'
 import classes from './NodeCard.module.css'
@@ -108,10 +109,10 @@ export const NodeCardWidget = memo((props: IProps) => {
     const percentage = calcPercentage()
     const fallbackProgress = node.isTrafficTrackingActive && node.trafficLimitBytes === 0
 
-    const isOnline = node.isConnected && node.xrayUptime !== 0 && !node.isDisabled
-    const isConfigMissing =
-        node.configProfile.activeConfigProfileUuid === null ||
-        node.configProfile.activeInbounds.length === 0
+    const isOnline = node.isConnected && !node.isDisabled
+    const isConfigMissing = !node.engines.some((engine) =>
+        engine.profiles.some((profile) => profile.inbounds.some((inbound) => inbound.assigned))
+    )
     const { backgroundColor, borderColor, boxShadow } = getNodeColors(node)
     const progressColor = getProgressColor(percentage, fallbackProgress)
 
@@ -358,7 +359,12 @@ export const NodeCardWidget = memo((props: IProps) => {
                                             size="sm"
                                             truncate
                                         >
-                                            {getXrayUptimeUtil(node.xrayUptime)}
+                                            {getXrayUptimeUtil(
+                                                Math.max(
+                                                    0,
+                                                    ...node.engines.map((engine) => engine.uptime)
+                                                )
+                                            )}
                                         </Text>
                                     </Flex>
                                 )}
@@ -477,12 +483,7 @@ export const NodeCardWidget = memo((props: IProps) => {
                                 </Tooltip>
                             )}
 
-                            <Flex align="center" gap={4}>
-                                <XrayLogo color="var(--mantine-color-dimmed)" size={12} />
-                                <Text c="dimmed" ff="monospace" size="xs">
-                                    {node.versions ? node.versions.xray : '—'}
-                                </Text>
-                            </Flex>
+                            <EngineStatusBadges engines={node.engines} />
                             <Flex align="center" gap={4}>
                                 <Logo color="var(--mantine-color-dimmed)" size={12} />
                                 <Text c="dimmed" ff="monospace" size="xs">
@@ -496,6 +497,7 @@ export const NodeCardWidget = memo((props: IProps) => {
 
             {isMobile && (
                 <Box>
+                    <EngineStatusBadges engines={node.engines} />
                     <Flex align="center" gap="sm" mb="xs">
                         {isConfigMissing && (
                             <Badge
@@ -636,7 +638,14 @@ export const NodeCardWidget = memo((props: IProps) => {
                                 fw={isOnline ? 600 : 500}
                                 size="xs"
                             >
-                                {isOnline ? getXrayUptimeUtil(node.xrayUptime) : 'offline'}
+                                {isOnline
+                                    ? getXrayUptimeUtil(
+                                          Math.max(
+                                              0,
+                                              ...node.engines.map((engine) => engine.uptime)
+                                          )
+                                      )
+                                    : 'offline'}
                             </Text>
                         </Flex>
                     </Flex>

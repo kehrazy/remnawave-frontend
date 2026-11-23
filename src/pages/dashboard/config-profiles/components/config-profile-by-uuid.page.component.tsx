@@ -1,6 +1,7 @@
 import { ActionIcon, ActionIconGroup, Group, Tooltip } from '@mantine/core'
 import { GetConfigProfileByUuidCommand, GetSnippetsCommand } from '@remnawave/backend-contract'
 import { ConfigEditorWidget } from '@widgets/dashboard/config-profiles/config-editor/config-editor.widget'
+import { NativeVpnProfileEditor } from '@widgets/dashboard/config-profiles/config-editor/native-vpn-profile-editor'
 import { useTranslation } from 'react-i18next'
 import { TbArrowBackUp, TbCode, TbFile } from 'react-icons/tb'
 import { useNavigate } from 'react-router'
@@ -42,18 +43,20 @@ export const ConfigProfileByUuidPageComponent = (props: Props) => {
 
                             <HelpActionIconShared hidden={false} screen="PAGE_CONFIG_PROFILES" />
 
-                            <ActionIconGroup>
-                                <Tooltip label={t('snippets.drawer.widget.snippets')} withArrow>
-                                    <ActionIcon
-                                        color="teal"
-                                        onClick={() => showModal('snippets_snippetsModal')}
-                                        size="input-md"
-                                        variant="soft"
-                                    >
-                                        <TbCode size="24px" />
-                                    </ActionIcon>
-                                </Tooltip>
-                            </ActionIconGroup>
+                            {configProfile.engine === 'xray' && (
+                                <ActionIconGroup>
+                                    <Tooltip label={t('snippets.drawer.widget.snippets')} withArrow>
+                                        <ActionIcon
+                                            color="teal"
+                                            onClick={() => showModal('snippets_snippetsModal')}
+                                            size="input-md"
+                                            variant="soft"
+                                        >
+                                            <TbCode size="24px" />
+                                        </ActionIcon>
+                                    </Tooltip>
+                                </ActionIconGroup>
+                            )}
 
                             <ActionIcon
                                 color="gray"
@@ -72,13 +75,20 @@ export const ConfigProfileByUuidPageComponent = (props: Props) => {
                     title={configProfile.name}
                 />
 
-                <ConfigEditorWidget
-                    configProfile={configProfile}
-                    isWasmCrashed={isWasmCrashed}
-                    isWasmRestarting={isWasmRestarting}
-                    onRestartWasm={onRestartWasm}
-                    snippets={snippets}
-                />
+                {configProfile.engine !== 'xray' ? (
+                    <NativeVpnProfileEditor
+                        key={configProfile.uuid}
+                        configProfile={configProfile}
+                    />
+                ) : (
+                    <ConfigEditorWidget
+                        configProfile={configProfile}
+                        isWasmCrashed={isWasmCrashed}
+                        isWasmRestarting={isWasmRestarting}
+                        onRestartWasm={onRestartWasm}
+                        snippets={snippets}
+                    />
+                )}
             </Page>
         </>
     )

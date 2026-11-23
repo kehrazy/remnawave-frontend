@@ -13,10 +13,12 @@ export function ShowConfigProfilesWithInboundsFeature(props: IProps) {
     const {
         activeConfigProfileInbounds,
         activeConfigProfileUuid,
-        configProfiles,
+        configProfiles: allProfiles,
         onSaveInbounds,
         errors
     } = props
+
+    const configProfiles = allProfiles.filter((profile) => profile.engine === 'xray')
 
     const { t } = useTranslation()
 

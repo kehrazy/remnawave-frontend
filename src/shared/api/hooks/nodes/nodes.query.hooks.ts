@@ -36,7 +36,8 @@ export const useGetNodes = createGetQueryHook({
     getQueryKey: () => nodesQueryKeys.getAllNodes.queryKey,
     rQueryParams: {
         refetchOnMount: true,
-        staleTime: sToMs(5)
+        staleTime: sToMs(5),
+        refetchInterval: sToMs(15)
     },
     errorHandler: (error) => errorHandler(error, 'Get All Nodes')
 })

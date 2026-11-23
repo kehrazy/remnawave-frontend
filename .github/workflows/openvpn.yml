@@ -20,6 +20,18 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - name: Install pinned backend contract
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          revision=$(cat backend-contract-revision)
+          mkdir -p .build
+          for attempt in $(seq 1 60); do
+            if gh release download "openvpn-${revision}" --repo kehrazy/remnawave --pattern 'remnawave-backend-contract-*.tgz' --output .build/backend-contract.tgz; then break; fi
+            sleep 5
+          done
+          test -s .build/backend-contract.tgz
+      - run: npm install --no-save --package-lock=false --ignore-scripts .build/backend-contract.tgz
       - run: npm run typecheck
       - run: npm run start:build
       - run: zip -qr remnawave-frontend.zip dist
@@ -27,4 +39,4 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "openvpn-${GITHUB_SHA}" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --prerelease --title "OpenVPN ${GITHUB_SHA:0:12}" --notes "Panel UI for OpenVPN endpoint management." remnawave-frontend.zip
+          gh release create "openvpn-${GITHUB_SHA}" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --prerelease --title "OpenVPN ${GITHUB_SHA:0:12}" --notes "VPN engines managed through profiles, nodes and Hosts." remnawave-frontend.zip

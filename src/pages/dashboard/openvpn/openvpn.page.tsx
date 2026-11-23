@@ -270,6 +270,9 @@ export function OpenVpnPage() {
                         try {
                             const body = {
                                 ...values,
+                                internalSquadUuids: values.relayTargetUuid
+                                    ? []
+                                    : values.internalSquadUuids,
                                 udpMask:
                                     values.protocol === 'udp' && !values.relayTargetUuid
                                         ? values.udpMask
@@ -323,7 +326,7 @@ export function OpenVpnPage() {
                                     value: endpoint.uuid,
                                     label: `${endpoint.name} · ${endpoint.node.name}`
                                 }))}
-                            description="Leave empty to run an OpenVPN server. Select an exit to relay connections through this node."
+                            description="Leave empty to run an OpenVPN server. Select an exit to relay connections through this node using the exit’s access policy."
                             disabled={editor !== 'new'}
                             label="Forward to another endpoint"
                             {...form.getInputProps('relayTargetUuid')}
@@ -406,16 +409,18 @@ export function OpenVpnPage() {
                                 />
                             </>
                         )}
-                        <MultiSelect
-                            clearable
-                            data={(squads?.internalSquads ?? []).map((squad) => ({
-                                value: squad.uuid,
-                                label: squad.name
-                            }))}
-                            description="Empty grants access to all active accounts. Account expiry and traffic limits always apply."
-                            label="Internal squads"
-                            {...form.getInputProps('internalSquadUuids')}
-                        />
+                        {!form.values.relayTargetUuid && (
+                            <MultiSelect
+                                clearable
+                                data={(squads?.internalSquads ?? []).map((squad) => ({
+                                    value: squad.uuid,
+                                    label: squad.name
+                                }))}
+                                description="Empty grants access to all active accounts. Account expiry and traffic limits always apply."
+                                label="Internal squads"
+                                {...form.getInputProps('internalSquadUuids')}
+                            />
+                        )}
                         <Switch
                             label="Disabled"
                             {...form.getInputProps('isDisabled', { type: 'checkbox' })}

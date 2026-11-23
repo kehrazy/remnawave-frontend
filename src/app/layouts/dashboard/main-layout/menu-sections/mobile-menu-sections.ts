@@ -99,6 +99,12 @@ export const useMobileMenuSections = (): MenuItem[] => {
                             icon: HiServer,
                             id: 'openvpn'
                         },
+{
+                            name: 'AmneziaWG',
+                            href: ROUTES.DASHBOARD.MANAGEMENT.AMNEZIAWG,
+                            icon: HiServer,
+                            id: 'amneziawg'
+                        },
                         {
                             name: `${t('constants.node-plugins')} β`,
                             href: ROUTES.DASHBOARD.MANAGEMENT.NODE_PLUGINS.ROOT,

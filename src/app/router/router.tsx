@@ -13,6 +13,7 @@ import { NodePluginEditorPageConnector } from '@pages/dashboard/node-plugins/ui/
 import { NodePluginsBasePageConnector } from '@pages/dashboard/node-plugins/ui/connectors/node-plugins-base-page.connector'
 import { NodesMetricsPageConnector } from '@pages/dashboard/nodes-metrics/ui/connectors'
 import { NodesPageConnector } from '@pages/dashboard/nodes/ui/connectors'
+import { AmneziaWgPage } from '@pages/dashboard/amneziawg/amneziawg.page'
 import { OpenVpnPage } from '@pages/dashboard/openvpn/openvpn.page'
 import { OpenEntityPage } from '@pages/dashboard/open-entity'
 import { QuickOpenPage } from '@pages/dashboard/quick-open'
@@ -80,6 +81,7 @@ const router = createBrowserRouter(
                             element={<NodesPageConnector />}
                             path={ROUTES.DASHBOARD.MANAGEMENT.NODES}
                         />
+                        <Route element={<AmneziaWgPage />} path={ROUTES.DASHBOARD.MANAGEMENT.AMNEZIAWG} />
                         <Route element={<OpenVpnPage />} path={ROUTES.DASHBOARD.MANAGEMENT.OPENVPN} />
                         <Route
                             element={<StatisticNodesConnector />}

@@ -82,7 +82,7 @@ export function NodeEnginesWidget({ node }: { node: GetNodeCommand.Response['res
                                               : 'AmneziaWG'}
                                     </Text>
                                     <Text ff="monospace" c="dimmed" size="xs">
-                                        {engine.version ?? '—'}
+                                        {engine.version?.replace(/^OpenVPN\s+/, '') ?? '—'}
                                     </Text>
                                 </Group>
                                 <Button

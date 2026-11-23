@@ -12,6 +12,7 @@ import {
     PiArrowsCounterClockwise,
     PiArrowUpDuotone,
     PiCpuDuotone,
+    PiClockDuotone,
     PiDotsSixVertical,
     PiGlobeSimple,
     PiMemoryDuotone,
@@ -20,7 +21,6 @@ import {
 import { TbAlertCircle, TbPackage, TbPlugConnected } from 'react-icons/tb'
 
 import { Logo } from '@shared/ui/logo'
-import { XrayLogo } from '@shared/ui/logos'
 import { prettifyBytesUtil, prettySiRealtimeBytesUtil } from '@shared/utils/bytes'
 import { faviconResolver } from '@shared/utils/misc'
 import { getNodeResetDaysUtil, getXrayUptimeUtil } from '@shared/utils/time-utils'
@@ -352,7 +352,7 @@ export const NodeCardWidget = memo((props: IProps) => {
 
                                 {isOnline && (
                                     <Flex align="center" gap={4}>
-                                        <XrayLogo size={14} />
+                                        <PiClockDuotone size={14} />
                                         <Text
                                             c={isOnline ? 'teal' : 'red'}
                                             fw={isOnline ? 600 : 500}
@@ -632,7 +632,7 @@ export const NodeCardWidget = memo((props: IProps) => {
                         )}
 
                         <Flex align="center" gap={4}>
-                            <XrayLogo size={12} />
+                            <PiClockDuotone size={12} />
                             <Text
                                 c={isOnline ? 'teal' : 'dimmed'}
                                 fw={isOnline ? 600 : 500}

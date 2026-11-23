@@ -27,6 +27,7 @@ import {
     PiArrowsCounterClockwise,
     PiCloudArrowUpDuotone,
     PiUsersDuotone,
+    PiClockDuotone,
     PiWarningCircle
 } from 'react-icons/pi'
 import { TbJson, TbPower, TbWifi, TbWifiOff } from 'react-icons/tb'
@@ -34,7 +35,6 @@ import { TbJson, TbPower, TbWifi, TbWifiOff } from 'react-icons/tb'
 import { queryClient } from '@shared/api'
 import { QueryKeys, useDisableNode, useEnableNode, useGetNodeMetadata } from '@shared/api/hooks'
 import { Logo } from '@shared/ui'
-import { XrayLogo } from '@shared/ui/logos'
 import { BaseOverlayHeader } from '@shared/ui/overlays/base-overlay-header'
 import { SectionCard } from '@shared/ui/section-card'
 import { prettifyBytesUtil } from '@shared/utils/bytes'
@@ -48,6 +48,7 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
     const { node } = props
 
     const { t } = useTranslation()
+    const uptime = Math.max(0, ...node.engines.map((engine) => engine.uptime))
 
     const mutationParams = {
         route: {
@@ -160,18 +161,16 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
 
                     <Group gap="xs">
                         {node.isConnected && (
-                            <Tooltip
-                                label={t('node-stats.card.represents-the-uptime-of-the-xray-core')}
-                            >
+                            <Tooltip label={t('vpn.uptime')}>
                                 <Badge
                                     color="teal"
                                     h={28}
-                                    leftSection={<XrayLogo size={14} />}
+                                    leftSection={<PiClockDuotone size={14} />}
                                     size="lg"
                                     variant="light"
                                     visibleFrom="sm"
                                 >
-                                    {getXrayUptimeUtil(node.xrayUptime)}
+                                    {getXrayUptimeUtil(uptime)}
                                 </Badge>
                             </Tooltip>
                         )}
@@ -395,27 +394,7 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
                             </Group>
                         </Paper>
 
-                        {node.versions && (
-                            <Paper
-                                p="xs"
-                                radius="md"
-                                style={{
-                                    background: 'rgba(139, 92, 246, 0.08)',
-                                    border: '1px solid rgba(139, 92, 246, 0.2)'
-                                }}
-                            >
-                                <Tooltip label={t('node-details-card.widget.xray-core-version')}>
-                                    <Group gap="xs" justify="center">
-                                        <XrayLogo color="var(--mantine-color-violet-5)" size={16} />
-                                        <Text c="violet.5" fw={600} size="sm">
-                                            {node.versions.xray}
-                                        </Text>
-                                    </Group>
-                                </Tooltip>
-                            </Paper>
-                        )}
-
-                        {node.xrayUptime !== 0 && (
+                        {uptime !== 0 && (
                             <Paper
                                 hiddenFrom="sm"
                                 p="xs"
@@ -425,20 +404,19 @@ export const NodeDetailsCardWidget = memo((props: IProps) => {
                                     border: '1px solid rgba(20, 184, 166, 0.2)' // teal-500 at 20%
                                 }}
                             >
-                                <Tooltip
-                                    label={t(
-                                        'node-stats.card.represents-the-uptime-of-the-xray-core'
-                                    )}
-                                >
+                                <Tooltip label={t('vpn.uptime')}>
                                     <Group gap="xs" justify="center">
-                                        <XrayLogo color="var(--mantine-color-teal-5)" size={16} />
+                                        <PiClockDuotone
+                                            color="var(--mantine-color-teal-5)"
+                                            size={16}
+                                        />
                                         <Text
                                             c="teal.5"
                                             fw={600}
                                             size="sm"
                                             style={{ textTransform: 'uppercase' }}
                                         >
-                                            {getXrayUptimeUtil(node.xrayUptime)}
+                                            {getXrayUptimeUtil(uptime)}
                                         </Text>
                                     </Group>
                                 </Tooltip>

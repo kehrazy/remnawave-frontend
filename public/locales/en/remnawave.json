@@ -1937,6 +1937,7 @@
     "host-node": "Server for this route",
     "native-host-hint": "A VPN route refers to one listener on one server. Use another Host for another server.",
     "node-install": "Linux x86_64. Load the verified image first, then save Compose and run docker compose up -d. Keep both state directories: they contain installed clients’ keys.",
-    "copy-image-command": "1. Copy image download command"
+    "copy-image-command": "1. Copy image download command",
+    "uptime": "Service uptime"
   }
 }

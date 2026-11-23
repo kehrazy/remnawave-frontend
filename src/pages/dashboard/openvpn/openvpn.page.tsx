@@ -17,6 +17,7 @@ import {
     Title
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
+import { modals } from '@mantine/modals'
 import { notifications } from '@mantine/notifications'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
@@ -189,6 +190,56 @@ export function OpenVpnPage() {
                                                 variant="subtle"
                                             >
                                                 {endpoint.isDisabled ? 'Enable' : 'Disable'}
+                                            </Button>
+                                            <Button
+                                                color="red"
+                                                size="xs"
+                                                variant="subtle"
+                                                onClick={() =>
+                                                    modals.openConfirmModal({
+                                                        title: `Remove ${endpoint.name}?`,
+                                                        children: (
+                                                            <Text size="sm">
+                                                                The endpoint will stop and disappear
+                                                                from subscriptions. Its keys remain
+                                                                on the node.
+                                                            </Text>
+                                                        ),
+                                                        labels: {
+                                                            confirm: 'Remove',
+                                                            cancel: 'Cancel'
+                                                        },
+                                                        confirmProps: { color: 'red' },
+                                                        onConfirm: async () => {
+                                                            try {
+                                                                await instance.delete(
+                                                                    `/api/openvpn/endpoints/${endpoint.uuid}`
+                                                                )
+                                                                await client.invalidateQueries({
+                                                                    queryKey: ['openvpn-endpoints']
+                                                                })
+                                                            } catch (error: unknown) {
+                                                                const response = (
+                                                                    error as {
+                                                                        response?: {
+                                                                            data?: {
+                                                                                message?: string
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                ).response
+                                                                notifications.show({
+                                                                    color: 'red',
+                                                                    message:
+                                                                        response?.data?.message ??
+                                                                        'Could not remove the endpoint.'
+                                                                })
+                                                            }
+                                                        }
+                                                    })
+                                                }
+                                            >
+                                                Remove
                                             </Button>
                                         </Group>
                                     </Table.Td>
